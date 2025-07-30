@@ -1,46 +1,170 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Text Stylizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        textarea::-webkit-scrollbar-track {
+            background: #333;
+            border-radius: 10px;
+        }
+
+        textarea::-webkit-scrollbar-thumb {
+            background: #fe2c55;
+            border-radius: 10px;
+        }
+
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: #e60039;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        .fade-in-out {
+            animation: fadeInOut 3s ease-in-out forwards;
+        }
+    </style>
 </head>
-<body>
+<body class="selection:bg-pink-500 selection:text-white">
 
-  <h1>bypass youtube comment filter</h1>
+    <div class="flex flex-col items-center justify-center w-full max-w-xl p-6 bg-gray-800 rounded-xl shadow-2xl space-y-6">
+        <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 tracking-tight text-center">
+            Guinness's TikTok Filter Bypass
+        </h1>
+        <p class="text-gray-400 text-center mb-4">
+            Bypass tiktok comment filtering and words blocked by streamers on TikTok.
+        </p>
 
-  <textarea id="textInput" placeholder="Enter text here"></textarea>
-  <button onclick="modifyText()">Bypass</button>
-  <button onclick="copyText()">Copy</button>
+        <textarea
+            id="textInput"
+            class="w-full h-32 p-4 text-lg bg-gray-700 text-white placeholder-gray-400 rounded-lg border border-gray-600 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition duration-300 resize-none"
+            placeholder="Enter text here..."
+        ></textarea>
 
-  <textarea id="modifiedText" readonly></textarea>
+        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full">
+            <button
+                onclick="modifyText()"
+                class="flex-1 px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-pink-500 to-red-500 rounded-lg shadow-lg hover:from-pink-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition duration-300 transform hover:scale-105"
+            >
+                ✨ Blocked Text
+            </button>
+            <button
+                onclick="copyText()"
+                class="flex-1 px-6 py-3 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition duration-300 transform hover:scale-105"
+            >
+                📋 Copy Text
+            </button>
+        </div>
 
-  <script>
-    function modifyText() {
-      let text = document.getElementById("textInput").value;
-      let modifiedText = text
-        .split("\n")
-        .map(line => {
-          line = line.split("").reverse().join("");
-          line = "\u202E" + line;
-          line = line.split("").join("\u202C");
-          line = line.split("").join("\u202E"); 
-          return line;
-        })
-        .join("\n");
-      document.getElementById("modifiedText").value = modifiedText;
-    }
+        <textarea
+            id="modifiedText"
+            readonly
+            class="w-full h-32 p-4 text-lg bg-gray-700 text-white placeholder-gray-400 rounded-lg border border-gray-600 focus:ring-2 focus:ring-pink-500 focus:border-transparent transition duration-300 resize-none cursor-not-allowed"
+            placeholder="Unblocked text will appear here..."
+        ></textarea>
 
-    function copyText() {
-      let copyText = document.getElementById("modifiedText");
-      copyText.select();
-      document.execCommand("copy");
-      alert("Text copied!");
-    }
-  </script>
+        <div
+            id="copyMessage"
+            class="absolute bottom-6 bg-green-500 text-white px-4 py-2 rounded-lg shadow-md opacity-0 transition-opacity duration-300"
+            style="display: none;"
+        >
+            Text copied to clipboard!
+        </div>
+    </div>
 
+    <script>
+        function modifyText() {
+            const textInput = document.getElementById("textInput");
+            const modifiedTextOutput = document.getElementById("modifiedText");
+            let text = textInput.value;
+
+            if (text.trim() === "") {
+                modifiedTextOutput.value = "Enter blocked text here.";
+                return;
+            }
+
+            let modifiedText = text
+                .split("\n")
+                .map(line => {
+                    line = line.split("").reverse().join("");
+                    line = "\u202E" + line;
+                    line = line.split("").join("\u202C");
+                    line = line.split("").join("\u202E");
+                    return line;
+                })
+                .join("\n");
+
+            modifiedTextOutput.value = modifiedText;
+        }
+
+        function copyText() {
+            const copyTextElement = document.getElementById("modifiedText");
+            const copyMessageElement = document.getElementById("copyMessage");
+
+            if (copyTextElement.value.trim() === "") {
+                copyMessageElement.textContent = "Nothing to copy!";
+                copyMessageElement.style.backgroundColor = '#ef4444';
+                copyMessageElement.style.display = 'block';
+                copyMessageElement.classList.add('fade-in-out');
+                setTimeout(() => {
+                    copyMessageElement.classList.remove('fade-in-out');
+                    copyMessageElement.style.display = 'none';
+                    copyMessageElement.style.backgroundColor = '#22c55e';
+                }, 3000);
+                return;
+            }
+
+            copyTextElement.select();
+            copyTextElement.setSelectionRange(0, copyTextElement.value.length);
+
+            try {
+                document.execCommand("copy");
+                copyMessageElement.textContent = "Text copied to clipboard!";
+                copyMessageElement.style.backgroundColor = '#22c55e';
+                copyMessageElement.style.display = 'block';
+                copyMessageElement.classList.add('fade-in-out');
+                setTimeout(() => {
+                    copyMessageElement.classList.remove('fade-in-out');
+                    copyMessageElement.style.display = 'none';
+                }, 3000);
+
+            } catch (err) {
+                console.error("Failed to copy text: ", err);
+                copyMessageElement.textContent = "Failed to copy text. Please copy manually.";
+                copyMessageElement.style.backgroundColor = '#ef4444';
+                copyMessageElement.style.display = 'block';
+                copyMessageElement.classList.add('fade-in-out');
+                setTimeout(() => {
+                    copyMessageElement.classList.remove('fade-in-out');
+                    copyMessageElement.style.display = 'none';
+                    copyMessageElement.style.backgroundColor = '#22c55e';
+                }, 3000);
+            }
+        }
+    </script>
 </body>
 </html>
